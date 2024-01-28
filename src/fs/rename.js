@@ -8,11 +8,24 @@ const rename = async () => {
   const sourceFile = `${currentFolderPath}/files/wrongFilename.txt`;
   const destinationFile = `${currentFolderPath}/files/properFilename.md`;
 
-  if (!fs.existsSync(sourceFile) || fs.existsSync(destinationFile)) {
-    throw new Error("FS operation failed");
+  try {
+    await fs.promises.access(sourceFile, fs.constants.F_OK);
+    if (await fs.promises.access(destinationFile, fs.constants.F_OK)) {
+      throw new Error("FS operation failed");
+    }
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      throw new Error("FS operation failed");
+    }
+    throw error;
   }
-  fs.renameSync(sourceFile, destinationFile);
-  console.log("File renamed successfully.");
+
+  try {
+    await fs.promises.rename(sourceFile, destinationFile);
+    console.log("File renamed successfully.");
+  } catch (error) {
+    console.error("An error occurred while renaming the file:", error);
+  }
 };
 
 await rename();

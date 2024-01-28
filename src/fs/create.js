@@ -7,16 +7,18 @@ const create = async () => {
   const currentFilePath = fileURLToPath(import.meta.url);
   const currentFolderPath = dirname(currentFilePath);
   const filePath = `${currentFolderPath}/files/fresh.txt`;
-  if (fs.existsSync(filePath)) {
+
+  try {
+    await fs.promises.access(filePath, fs.constants.F_OK);
     throw new Error("FS operation failed");
-  }
-  fs.writeFile(filePath, content, (error) => {
-    if (error) {
-      console.error("An error occurred while creating the file:", error);
-    } else {
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      await fs.promises.writeFile(filePath, content);
       console.log("File created successfully!");
+    } else {
+      throw error;
     }
-  });
+  }
 };
 
 await create();

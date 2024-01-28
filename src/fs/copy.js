@@ -11,13 +11,13 @@ const copy = async () => {
     throw new Error("FS operation failed");
   }
 
-  fs.mkdirSync(destinationFolder);
-  const files = fs.readdirSync(sourceFolder);
-  files.forEach((file) => {
+  await fs.promises.mkdir(destinationFolder);
+  const files = await fs.promises.readdir(sourceFolder);
+  for (const file of files) {
     const sourcePath = path.join(sourceFolder, file);
     const destinationPath = path.join(destinationFolder, file);
-    fs.copyFileSync(sourcePath, destinationPath);
-  });
+    await fs.promises.copyFile(sourcePath, destinationPath);
+  }
 };
 
 await copy();

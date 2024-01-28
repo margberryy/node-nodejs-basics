@@ -6,12 +6,23 @@ const read = async () => {
   const currentFilePath = fileURLToPath(import.meta.url);
   const currentFolderPath = path.dirname(currentFilePath);
   const filePath = `${currentFolderPath}/files/fileToRead.txt`;
-  if (!fs.existsSync(filePath)) {
-    throw new Error("FS operation failed");
+
+  try {
+    await fs.promises.access(filePath, fs.constants.F_OK);
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      throw new Error("FS operation failed");
+    }
+    throw error;
   }
-  const fileContent = fs.readFileSync(filePath, "utf8");
-  console.log("File content:");
-  console.log(fileContent);
+
+  try {
+    const fileContent = await fs.promises.readFile(filePath, "utf8");
+    console.log("File content:");
+    console.log(fileContent);
+  } catch (error) {
+    console.error("An error occurred while reading the file:", error);
+  }
 };
 
 await read();

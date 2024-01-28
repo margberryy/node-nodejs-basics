@@ -7,11 +7,16 @@ const remove = async () => {
   const currentFolderPath = path.dirname(currentFilePath);
   const filePath = `${currentFolderPath}/files/fileToRemove.txt`;
 
-  if (!fs.existsSync(filePath)) {
-    throw new Error("FS operation failed");
+  try {
+    await fs.promises.access(filePath, fs.constants.F_OK);
+    await fs.promises.unlink(filePath);
+    console.log("File deleted successfully.");
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      throw new Error("FS operation failed");
+    }
+    throw error;
   }
-  fs.unlinkSync(filePath);
-  console.log("File deleted successfully.");
 };
 
 await remove();
