@@ -2,7 +2,6 @@ const parseEnv = () => {
   const prefix = "RSS_";
   const envVariables = Object.keys(process.env)
     .filter((key) => {
-      console.log("key", key);
       return key.startsWith(prefix);
     })
     .map((key) => `RSS_${key.slice(prefix.length)}=${process.env[key]}`)
