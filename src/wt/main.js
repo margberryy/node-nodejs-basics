@@ -1,4 +1,4 @@
-import { Worker, isMainThread } from "worker_threads";
+import { Worker } from "worker_threads";
 import os from "os";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
